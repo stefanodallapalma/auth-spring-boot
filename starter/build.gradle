@@ -22,7 +22,7 @@ publishing {
             pom {
                 name = 'Auth Spring Boot Starter'
                 description = 'A Spring Boot starter for authentication with JSON Web Tokens and Refresh Tokens'
-                url = 'https://github.com/stefanodallapalma/auth-spring-boot-starter'
+                url = 'https://github.com/stefanodallapalma/auth-spring-boot'
 
                 licenses {
                     license {
@@ -38,9 +38,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:git://github.com/stefanodallapalma/auth-spring-boot-starter.git'
-                    developerConnection = 'scm:git:ssh://git@github.com:stefanodallapalma/auth-spring-boot-starter.git'
-                    url = 'https://github.com/stefanodallapalma/auth-spring-boot-starter'
+                    connection = 'scm:git:git://github.com/stefanodallapalma/auth-spring-boot.git'
+                    developerConnection = 'scm:git:ssh://git@github.com:stefanodallapalma/auth-spring-boot.git'
+                    url = 'https://github.com/stefanodallapalma/auth-spring-boot'
                 }
             }
         }

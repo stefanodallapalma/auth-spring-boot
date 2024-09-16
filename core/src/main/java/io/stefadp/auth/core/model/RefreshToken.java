@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 @Entity
-@Table(name = "revoked_tokens")
+@Table(name = "refresh_tokens")
 public class RefreshToken {
 
     @Id

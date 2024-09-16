@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+io.stefadp.auth.config.JwtAutoConfiguration,\
+io.stefadp.auth.config.RefreshTokenAutoConfiguration

@@ -1,0 +1,5 @@
+rootProject.name = 'auth-spring-boot'
+include 'core'
+include 'web'
+include 'starter'
+

@@ -44,40 +44,26 @@ To use this library, your project must meet the following requirements:
 
 ## Installation
 
-1. **Add the Library to Your Project**:
-    - If you have the library JAR, place it in the `libs` directory of your project.
-    - Update your `build.gradle` to include the library:
 
-   ```gradle
-   dependencies {
-       implementation files('libs/your-library.jar')
-       implementation 'org.springframework.boot:spring-boot-starter-security'
-       implementation 'org.springframework.boot:spring-boot-starter-web'
-       implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-       implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
-   }
-   ```
-
-2. **Enable Auto-Configuration**:
-   Ensure your application is scanning the packages that include the library components.
-
-   ```java
-   @SpringBootApplication
-   @ComponentScan(basePackages = {"io.stefadp.auth"})
-   @EnableJpaRepositories(basePackages = "io.stefadp.auth.core.repository")
-   @EntityScan(basePackages = "io.stefadp.auth.core.model")
-   public class YourApplication {
-       public static void main(String[] args) {
-           SpringApplication.run(YourApplication.class, args);
-       }
-   }
-   ```
 
 ## Getting Started
 
-## 1. Configure JWT Settings
+## 1. Add library
 
-First, create a configuration class to define how the JWT tokens are generated, including expiration time, issuer, and the signing algorithm.
+First, add the Library to your project:
+
+- If you have the library JAR, place it in the `libs` directory of your project.
+- Update your `build.gradle` to include the library:
+
+   ```gradle
+   dependencies {
+       implementation files('libs/auth-spring-boot-starter-0.0.1.jar')
+   }
+   ```
+   
+## 2. Configure JWT Settings
+
+Then, create a configuration class to define how the JWT tokens are generated, including expiration time, issuer, and the signing algorithm.
 
 ```java
 @Configuration
@@ -96,16 +82,18 @@ public class JwtConfiguration {
     }
 }
 ```
-
-### Note:
+<details>
+<summary>Notes</summary>
 
 * _The `JWT_SECRET` should be securely managed and not hardcoded in production environments. **Use environment variables or secure vaults to manage sensitive information.**_
 
 * _The `JWT_SECRET` should be a secure, random string. It can be a Base64-encoded string, a hexadecimal string, or a plain alphanumeric string. Ensure that the SECRET is long enough and suitably complex for the selected signing algorithm. For `HS512`, a 64-byte (512-bit) secret is recommended._
+</details>
 
 
-## 2. (Optional) Configure Refresh Token Settings
+## 3. (Optional) Configure Refresh Token Settings
 
+<details>
 Next, create a configuration class for Refresh Tokens. This class will handle the generation, encoding, and expiration settings for refresh tokens.
 
 ```java
@@ -137,9 +125,10 @@ public class RefreshTokenConfiguration {
 * **PasswordEncoder:** Encrypts the refresh token for secure storage. The default implementation uses BCrypt, but you can customize it.
 * **RefreshTokenGenerator:** Generates secure random tokens. The default generator uses SecureRandom with 16 bytes length.
 
+</details>
 
 
-## 3. Integrate JWT and Refresh Token with Your Application
+## 4. Integrate JWT and Refresh Token with Your Application
 
 Your application can seamlessly handle authentication token management by utilizing the pre-built endpoints provided by the library through the `AuthTokensController`. This controller exposes endpoints for refreshing tokens and deleting tokens (i.e., logging out). 
 This means you do not need to manually implement these endpoints in your own controllers.
@@ -183,6 +172,7 @@ public class MyAuthController {
 - The provided `AuthTokensController` handles token refresh and deletion, so there's no need to re-implement these features.
 - The `AuthTokensManagementFacade` is available to simplify the creation of tokens during the login process.
 
+TODO: Need to mention that the endpoints should be made accessible in the SecurityConfig.
 
 ## Key Components
 

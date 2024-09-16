@@ -4,8 +4,6 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import jakarta.transaction.Transactional;
 import io.stefadp.auth.core.model.RefreshToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 
@@ -14,7 +12,6 @@ import java.time.Instant;
  * refreshing, and invalidation of tokens. This service interacts with the token store
  * and generator to ensure secure handling of refresh tokens.
  */
-@Service
 public class RefreshTokenManagementService {
     private final RefreshTokenGenerator refreshTokenGenerator;
     private final RefreshTokenSettings refreshTokenSettings;
@@ -28,7 +25,6 @@ public class RefreshTokenManagementService {
      * @param refreshTokenSettings  The settings for refresh token validity.
      * @param refreshTokenStore     The service used for storing and managing refresh tokens.
      */
-    @Autowired
     public RefreshTokenManagementService(
             RefreshTokenGenerator refreshTokenGenerator,
             RefreshTokenSettings refreshTokenSettings,
@@ -78,12 +74,6 @@ public class RefreshTokenManagementService {
         if(token.get().hasExpired()) return null;
 
         return create(token.get().getSubject());
-
-
-//        return refreshTokenStore.retrieveToken(oldTokenValue)
-//                .filter(RefreshToken::hasNotExpired)
-//                .map(refreshToken -> create(refreshToken.getSubject())) // Proceed to delete old token and create new one
-//                .orElse(null);
     }
 
     /**

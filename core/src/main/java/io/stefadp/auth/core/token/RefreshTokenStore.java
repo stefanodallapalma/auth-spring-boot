@@ -2,12 +2,10 @@ package io.stefadp.auth.core.token;
 
 import io.stefadp.auth.core.model.RefreshToken;
 import io.stefadp.auth.core.repository.RefreshTokenRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
@@ -15,7 +13,6 @@ import java.util.Optional;
 /**
  * Service class responsible for managing low-level operations to securely store, retrieve, and delete refresh tokens.
  */
-@Component
 public class RefreshTokenStore {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -26,7 +23,6 @@ public class RefreshTokenStore {
      * @param passwordEncoder        The password encoder used to encrypt token values.
      * @param refreshTokenRepository The repository for storing and retrieving refresh tokens.
      */
-    @Autowired
     public RefreshTokenStore(PasswordEncoder passwordEncoder, RefreshTokenRepository refreshTokenRepository) {
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenRepository = refreshTokenRepository;

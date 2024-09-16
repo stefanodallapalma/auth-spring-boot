@@ -1,8 +1,8 @@
 package io.stefadp.auth.config;
 
-import io.stefadp.auth.core.token.RefreshTokenGenerator;
-import io.stefadp.auth.core.token.RefreshTokenSettings;
-import io.stefadp.auth.core.token.SecureRandomRefreshTokenGenerator;
+import io.stefadp.auth.core.repository.RefreshTokenRepository;
+import io.stefadp.auth.core.repository.RevokedTokenRepository;
+import io.stefadp.auth.core.token.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,5 +34,27 @@ public class RefreshTokenAutoConfiguration {
                 .expirationTime(7)
                 .expirationTimeUnit(ChronoUnit.DAYS)
                 .build();
+    }
+
+    @Bean
+    public RefreshTokenStore refreshTokenStore(
+            PasswordEncoder passwordEncoder,
+            RefreshTokenRepository refreshTokenRepository
+    ) {
+        return new RefreshTokenStore(passwordEncoder, refreshTokenRepository);
+    }
+
+    @Bean
+    public RefreshTokenManagementService refreshTokenManagementService(
+            RefreshTokenGenerator refreshTokenGenerator,
+            RefreshTokenSettings refreshTokenSettings,
+            RefreshTokenStore refreshTokenStore
+    ) {
+        return new RefreshTokenManagementService(refreshTokenGenerator, refreshTokenSettings, refreshTokenStore);
+    }
+
+    @Bean
+    public TokenRevocationService tokenRevocationService(RevokedTokenRepository revokedTokenRepository) {
+        return new TokenRevocationService(revokedTokenRepository);
     }
 }

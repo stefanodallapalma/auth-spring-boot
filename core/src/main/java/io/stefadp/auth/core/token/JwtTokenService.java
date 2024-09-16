@@ -2,21 +2,16 @@ package io.stefadp.auth.core.token;
 
 import jakarta.annotation.Nonnull;
 import io.stefadp.auth.core.model.RefreshToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.*;
-import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 
-@Service
 public class JwtTokenService {
-
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
     private final JwtSettings jwtSettings;
     private final RefreshTokenStore refreshTokenStore;
 
-    @Autowired
     public JwtTokenService(
             JwtEncoder jwtEncoder,
             JwtDecoder jwtDecoder,

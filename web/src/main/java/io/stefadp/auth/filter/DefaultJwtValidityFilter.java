@@ -8,9 +8,7 @@ import io.stefadp.auth.core.model.RevokedToken;
 import io.stefadp.auth.core.repository.RefreshTokenRepository;
 import io.stefadp.auth.core.token.JwtTokenService;
 import io.stefadp.auth.core.token.TokenRevocationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -18,14 +16,12 @@ import java.io.PrintWriter;
 import java.time.Instant;
 
 
-@Component
 public class DefaultJwtValidityFilter extends OncePerRequestFilter {
 
     private final JwtTokenService jwtTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenRevocationService tokenRevocationService;
 
-    @Autowired
     public DefaultJwtValidityFilter(
             JwtTokenService jwtTokenService,
             RefreshTokenRepository refreshTokenRepository,

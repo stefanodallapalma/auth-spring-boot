@@ -2,14 +2,11 @@ package io.stefadp.auth.core.token;
 
 import io.stefadp.auth.core.model.RevokedToken;
 import io.stefadp.auth.core.repository.RevokedTokenRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * Service responsible for managing the revocation of access and refresh tokens.
  * It provides methods to revoke a token and check whether a token has been revoked.
  */
-@Service
 public class TokenRevocationService {
 
     private final RevokedTokenRepository revokedTokenRepository;
@@ -20,7 +17,6 @@ public class TokenRevocationService {
      *
      * @param revokedTokenRepository The repository used for accessing and modifying revoked token data.
      */
-    @Autowired
     public TokenRevocationService(RevokedTokenRepository revokedTokenRepository) {
         this.revokedTokenRepository = revokedTokenRepository;
     }

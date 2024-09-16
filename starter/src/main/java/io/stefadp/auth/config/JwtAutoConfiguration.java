@@ -2,6 +2,8 @@ package io.stefadp.auth.config;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import io.stefadp.auth.core.token.JwtSettings;
+import io.stefadp.auth.core.token.JwtTokenService;
+import io.stefadp.auth.core.token.RefreshTokenStore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,5 +44,14 @@ public class JwtAutoConfiguration {
         var bytes = jwtSettings.secret().getBytes();
         SecretKey secretKey = new SecretKeySpec(bytes, 0, bytes.length, "RSA");
         return NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(jwtSettings.macAlgorithm()).build();
+    }
+
+    @Bean
+    public JwtTokenService jwtTokenService(
+            JwtEncoder jwtEncoder,
+            JwtDecoder jwtDecoder,
+            JwtSettings jwtSettings,
+            RefreshTokenStore refreshTokenStore) {
+        return new JwtTokenService(jwtEncoder, jwtDecoder, jwtSettings, refreshTokenStore);
     }
 }

@@ -13,13 +13,11 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
 @RequestMapping("/auth")
 @Tag(name = "Auth")
 public class AuthTokensController {
     private final AuthTokensManagementFacade authTokensManagementFacade;
 
-    @Autowired
     public AuthTokensController(AuthTokensManagementFacade authTokensFacade) {
         this.authTokensManagementFacade = authTokensFacade;
     }

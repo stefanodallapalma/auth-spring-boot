@@ -7,10 +7,8 @@ import io.stefadp.auth.core.model.RevokedToken;
 import io.stefadp.auth.core.token.JwtTokenService;
 import io.stefadp.auth.core.token.RefreshTokenManagementService;
 import io.stefadp.auth.core.token.TokenRevocationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
-import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 
@@ -30,14 +28,11 @@ import java.time.Instant;
  * <p>
  * This service is intended to be used by consumers of the library to handle token-based authentication seamlessly.
  */
-@Service
 public class AuthTokensManagementFacade {
-
     private final JwtTokenService jwtTokenService;
     private final RefreshTokenManagementService refreshTokenManagementService;
     private final TokenRevocationService tokenRevocationService;
 
-    @Autowired
     public AuthTokensManagementFacade(
             JwtTokenService jwtTokenService,
             RefreshTokenManagementService refreshTokenManagementService,

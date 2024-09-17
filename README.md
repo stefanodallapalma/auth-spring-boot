@@ -4,7 +4,9 @@
 This library provides a robust solution for handling JWT-based authentication, including the creation, management, and revocation of access and refresh tokens. It is designed to facilitate secure user authentication workflows, including token rotation, revocation, and refresh operations.
 It comes with an out-of-the-box controller to handle CRUD operations for auth token management.
 
-![Alt Text](./docs/swagger.mov)
+![Alt Text](./docs/preview.gif)
+
+
 
 ## Features
 

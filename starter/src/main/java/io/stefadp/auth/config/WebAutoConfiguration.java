@@ -5,7 +5,6 @@ import io.stefadp.auth.api.AuthTokensManagementFacade;
 import io.stefadp.auth.core.repository.RefreshTokenRepository;
 import io.stefadp.auth.core.token.*;
 import io.stefadp.auth.filter.DefaultJwtValidityFilter;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

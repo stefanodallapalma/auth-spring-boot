@@ -19,6 +19,8 @@ import javax.crypto.spec.SecretKeySpec;
 @Configuration
 public class JwtAutoConfiguration {
 
+    // This token is for compatibility only and SHOULD NOT be used in production environment. 
+    // Users MUST pass their own jwt secret while configuring the JwtSettings bean in their SpringBoot application. 
     private static final String DEFAULT_JWT_SECRET = "f33328a0b388419003188ed97b6ebfb25dd5983ccca4936b6ff18c9f6f6023fb";
 
     @Bean

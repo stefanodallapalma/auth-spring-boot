@@ -4,7 +4,7 @@ plugins {
     id 'signing'
 }
 
-group = 'io.stefadp'
+group = 'io.github.stefanodallapalma'
 version = '0.0.1'
 
 java {
@@ -16,7 +16,6 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-
             artifactId = 'auth-spring-boot-starter'
 
             pom {
@@ -30,9 +29,10 @@ publishing {
                         url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
                 }
+
                 developers {
                     developer {
-                        id = 'your-id'
+                        id = 'stefanodallapalma'
                         name = 'Stefano Dalla Palma'
                         email = 'stefano.dallapalma0@gmail.com'
                     }

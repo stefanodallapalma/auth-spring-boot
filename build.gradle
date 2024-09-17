@@ -4,8 +4,8 @@ plugins {
     id 'java'
 }
 
-group = 'io.stefadp'
-version = '1.0-SNAPSHOT'
+group = 'io.github.stefanodallapalma'
+version = '0.0.1'
 
 subprojects {
     apply plugin: 'java'

@@ -1,4 +1,4 @@
-io.stefadp.auth.config.JpaAutoConfiguration
-io.stefadp.auth.config.JwtAutoConfiguration
-io.stefadp.auth.config.RefreshTokenAutoConfiguration
-io.stefadp.auth.config.WebAutoConfiguration
+io.github.stefanodallapalma.auth.config.JpaAutoConfiguration
+io.github.stefanodallapalma.auth.config.JwtAutoConfiguration
+io.github.stefanodallapalma.auth.config.RefreshTokenAutoConfiguration
+io.github.stefanodallapalma.auth.config.WebAutoConfiguration

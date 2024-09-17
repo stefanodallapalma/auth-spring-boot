@@ -1,30 +1,25 @@
 # Authentication and Token Management Library
 
-
-This library provides a robust solution for handling JWT-based authentication, including the creation, management, and revocation of access and refresh tokens. It is designed to facilitate secure user authentication workflows, including token rotation, revocation, and refresh operations.
-It comes with an out-of-the-box controller to handle CRUD operations for auth token management.
-
-![Alt Text](./docs/preview.gif)
-
+This library provides an out-of-the-box solution for handling JWT-based authentication, focusing on access and refresh token creation, management, and revocation. It simplifies secure user authentication workflows, including token rotation and token-based logout, while minimizing the need for customization.
 
 
 ## Features
 
-- **JWT Token Generation**: Create JSON Web Tokens (JWT) for authenticated users.
-- **Refresh Token Management**: Securely generate, store, and rotate refresh tokens.
-- **Token Revocation**: Mark tokens as revoked to prevent further use.
-- **Integrated Token Facade**: Simplify token operations through a unified interface.
-- **Security Compliance**: Ensure that tokens are securely managed and rotated as per best practices.
+- **JWT Token Generation**: Securely generate JSON Web Tokens (JWT) for authenticated users.
+- **Refresh Token Management**: Easily generate, store, and rotate refresh tokens.
+- **Token Revocation**: Revoke tokens to prevent further use.
+- **Integrated Token Management**: A unified, simple interface for token operations.
+- **Built-in Security Filters**: Validate and manage tokens securely, according to best practices.
+- **Easy Integration**: Pre-built controllers and filters for easy integration with your Spring Boot application.
 
 
 ## Table of Contents
 - [Requirements](#requirements)
-- [Installation](#installation)
 - [Getting Started](#getting-started)
-    - [Scenarios to Consider](#scenarios-to-consider)
-    - [Configure JWT Settings](#configure-jwt-settings)
-    - [(Optional) Configure Refresh Token Settings](#configure-refresh-token-settings)
-    - [Integrate JWT and Refresh Token with Your Application](#integrate-jwt-and-refresh-token-with-your-application)
+    1. [Add Library](#1-add-library)
+    2. [Configure JWT Settings](#2-configure-jwt-settings)
+    3. [(Optional) Configure Refresh Token Settings](#3-optional-configure-refresh-token-settings)
+    4. [Integrate with Your Application](#4-integrate-with-your-application)
 - [Key Components](#key-components)
     - [AuthTokensManagementFacade](#authtokensmanagementfacade)
     - [JwtTokenService](#jwttokenservice)
@@ -33,41 +28,31 @@ It comes with an out-of-the-box controller to handle CRUD operations for auth to
     - [DefaultJwtValidityFilter](#defaultjwtvalidityfilter)
 - [Usage Notes](#usage-notes)
 
-
 ## Requirements
-
-To use this library, your project must meet the following requirements:
-
+To use this library, ensure your project meets the following:
 - **Java 17 or higher**.
 - **Spring Boot 3.x**.
 - **Dependencies**:
-    - `org.springframework.boot:spring-boot-starter-security`
-    - `org.springframework.boot:spring-boot-starter-web`
-    - `org.springframework.boot:spring-boot-starter-data-jpa`
-    - `org.springdoc:springdoc-openapi-starter-webmvc-ui`
-
-## Installation
-
+    - `spring-boot-starter-security`
+    - `spring-boot-starter-web`
+    - `spring-boot-starter-data-jpa`
+    - `spring-boot-starter-validation`
+    - `springdoc-openapi-starter-webmvc-ui`
 
 
 ## Getting Started
 
-## 1. Add library
+### 1. Add Library
+Ensure the library is available in your project by adding the JAR file and updating your dependencies.
+Download the library and add it to your project’s `libs` directory (a version on Maven Central is coming soon). Then, include it in your `build.gradle` file:
+```gradle
+dependencies {
+    implementation files('libs/auth-spring-boot-starter-0.0.1.jar')
+}
+```
 
-First, add the Library to your project:
-
-- If you have the library JAR, place it in the `libs` directory of your project.
-- Update your `build.gradle` to include the library:
-
-   ```gradle
-   dependencies {
-       implementation files('libs/auth-spring-boot-starter-0.0.1.jar')
-   }
-   ```
-   
-## 2. Configure JWT Settings
-
-Then, create a configuration class to define how the JWT tokens are generated, including expiration time, issuer, and the signing algorithm.
+### 2. Configure JWT Settings
+Create a configuration class to manage JWT token generation. This defines important token parameters like the secret, algorithm, and expiration time.
 
 ```java
 @Configuration
@@ -81,73 +66,69 @@ public class JwtConfiguration {
                 .secretAndAlgorithm(JWT_SECRET, MacAlgorithm.HS512)
                 .defaultExpirationTime() // 1
                 .defaultExpirationTimeUnit() // ChronoUnit.HOURS
-                .defaultIssuer() // self
+                .defaultIssuer() // "self"
                 .build();
     }
 }
 ```
-<details>
-<summary>Notes</summary>
+> **Note:** The `JWT_SECRET` should be securely managed. Do not hardcode sensitive values in production environments. Use environment variables or secure vaults.
 
-* _The `JWT_SECRET` should be securely managed and not hardcoded in production environments. **Use environment variables or secure vaults to manage sensitive information.**_
+<details> <summary>Customizing JWT Settings</summary>
+If you wish to modify the default settings, you can override values like expiration time and issuer. Below is an example configuration with custom values for token expiration and issuer.
 
-* _The `JWT_SECRET` should be a secure, random string. It can be a Base64-encoded string, a hexadecimal string, or a plain alphanumeric string. Ensure that the SECRET is long enough and suitably complex for the selected signing algorithm. For `HS512`, a 64-byte (512-bit) secret is recommended._
+```java
+@Bean
+public JwtSettings jwtSettings() {
+    return new JwtSettings.Builder()
+            .secretAndAlgorithm(JWT_SECRET, MacAlgorithm.HS512)
+            .expirationTime(30) // Custom expiration time of 30 minutes
+            .expirationTimeUnit(ChronoUnit.MINUTES) // Set time unit to minutes
+            .defaultIssuer("myorg") // Custom issuer value
+            .build();
+}
+```
+
+#### Customization Options
+
+- `expirationTime(int)`: Set the custom duration for token validity. In this example, tokens expire after 30 minutes.
+- `expirationTimeUnit(ChronoUnit)`: Specify the time unit for expiration (e.g., minutes, hours, days). The default is hours, but you can change it to minutes or any other appropriate time unit.
+- `defaultIssuer(String)`: Customize the issuer field in the JWT. You can specify any string that represents the entity issuing the token, such as "myorg" in this case
+
 </details>
 
-
-## 3. (Optional) Configure Refresh Token Settings
-
-<details>
-Next, create a configuration class for Refresh Tokens. This class will handle the generation, encoding, and expiration settings for refresh tokens.
+### 3. (Optional) Configure Refresh Token Settings
+<details> <summary>If needed, customize the settings for refresh token management. The defaults should work for most use cases, but here’s how you can modify them.</summary>
 
 ```java
 @Configuration
 public class RefreshTokenConfiguration {
 
-    @Bean // Optional: only if you want to replace the default one below
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean // Optional: only if you want to replace the default one below
+    @Bean
     public RefreshTokenGenerator refreshTokenGenerator() {
         return new SecureRandomRefreshTokenGenerator(new SecureRandom(), 16);
     }
 
-    @Bean // Optional: only if you want to replace the default one below
+    @Bean
     public RefreshTokenSettings refreshTokenSettings() {
         return new RefreshTokenSettings.Builder()
-                .expirationTime(7) // Set the refresh token expiration time (default is 7)
-                .expirationTimeUnit(ChronoUnit.DAYS) // Set the time unit (default is DAYS)
+                .expirationTime(7)
+                .expirationTimeUnit(ChronoUnit.DAYS)
                 .build();
     }
 }
 ```
-
-### Explanation:
-
-* **PasswordEncoder:** Encrypts the refresh token for secure storage. The default implementation uses BCrypt, but you can customize it.
-* **RefreshTokenGenerator:** Generates secure random tokens. The default generator uses SecureRandom with 16 bytes length.
-
+> **Note:** The `PasswordEncoder` is used to encrypt refresh tokens before storing them securely in the database.
 </details>
 
+### 4. Integrate with Your Application
+The library provides an out-of-the-box controller (`AuthTokensController`) to manage token refresh and revocation. To use it, you only need to configure your security settings to allow public access to the token endpoints.
 
-## 4. Integrate JWT and Refresh Token with Your Application
-
-Your application can seamlessly handle authentication token management by utilizing the pre-built endpoints provided by the library through the `AuthTokensController`. This controller exposes endpoints for refreshing tokens and deleting tokens (i.e., logging out). 
-This means you do not need to manually implement these endpoints in your own controllers.
-
-### Usage Scenarios:
-
-- **Creating Tokens**: While you still need to implement an endpoint to handle the initial login and creation of JWT and refresh tokens, the `AuthTokensManagementFacade` can be used to simplify this process.
-
-- **Refreshing Tokens**: The `AuthTokensController` already provides endpoints for refreshing both access and refresh tokens (PUT `/auth/auth_tokens`) or refreshing only the access token (PUT `/auth/access_token`). You can simply call these endpoints from your frontend or client applications.
-
-- **Deleting Tokens**: To handle user logout and invalidate both the access and refresh tokens, you can use the `/auth/auth_tokens` DELETE endpoint provided by `AuthTokensController`.
-
-### Example Usage for Login:
-
-While the library handles token management endpoints, you still need to create an endpoint for user login.
+- **Create a Login Endpoint**: You'll need a custom endpoint for user authentication (login) and to generate access and refresh tokens. Use the `AuthTokensManagementFacade::createAuthTokens(String)` to simplify this process.
 
 ```java
 @RestController
@@ -161,94 +142,85 @@ public class MyAuthController {
         this.authTokensFacade = authTokensFacade;
     }
 
-    @PostMapping("/login") // Or /auth_tokens for consistency
+    @PostMapping("/login") // Can be any path, also auth_tokens for consistency with the provided controller
     public ResponseEntity<AuthTokens> login(@RequestBody LoginRequest loginRequest) {
-        // Authenticate user based on your use case
-        // Then, generate a new pair of JWT access and refresh tokens
+        // Authentication logic here
         AuthTokens authTokens = authTokensFacade.createAuthTokens(loginRequest.getUsername());
         return ResponseEntity.ok(authTokens);
     }
 }
 ```
+- **Security Configuration**: Ensure that your security configuration allows public access to token refresh endpoints (`PUT /auth/auth_tokens`, `PUT /auth/access_token`), while protecting others. The DELETE endpoint requires bearer authentication, so no further configuration is needed.
 
-### Key Notes:
+```java
+// In SecurityConfig.java
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.authorizeHttpRequests(
+        it ->
+            it.requestMatchers(new AntPathRequestMatcher("/auth/login")).permitAll()
+              .requestMatchers(new AntPathRequestMatcher("/auth/auth_tokens", "PUT")).permitAll()
+              .requestMatchers(new AntPathRequestMatcher("/auth/access_tokens", "PUT")).permitAll() // You may want to skip this if you're already using `PUT /auth/auth_tokens` and vice versa.
+              .anyRequest()
+              .authenticated());
 
-- The provided `AuthTokensController` handles token refresh and deletion, so there's no need to re-implement these features.
-- The `AuthTokensManagementFacade` is available to simplify the creation of tokens during the login process.
+    // Additional http configs
+    return http.build();
+}
+```
 
-TODO: Need to mention that the endpoints should be made accessible in the SecurityConfig.
+
+![Alt Text](./docs/preview.gif)
 
 ## Key Components
 
-<details>
-  <summary>AuthTokensManagementFacade</summary>
+### AuthTokensManagementFacade
+The `AuthTokensManagementFacade` provides a high-level interface for creating, refreshing, and revoking tokens.
 
-The `AuthTokensManagementFacade` is the primary interface for managing authentication tokens. It provides methods for creating, refreshing, and deleting tokens, encapsulating all the necessary logic to securely handle authentication workflows.
+- **Create Auth Tokens**: Generates new access and refresh tokens.
+- **Refresh Auth Tokens**: Rotates access and refresh tokens using a valid refresh token.
+- **Delete Auth Tokens**: Revokes both tokens (logging out the user).
 
-- **Create Auth Tokens**: Generates a new pair of access and refresh tokens.
-- **Refresh Auth Tokens**: Rotates both tokens if the refresh token is valid.
-- **Refresh Access Token**: Refreshes only the access token, keeping the refresh token unchanged.
-- **Delete Auth Tokens**: Revokes both tokens, effectively logging the user out.
+### JwtTokenService
+The `JwtTokenService` manages JWT creation and validation.
+- **Create**: Generates JWTs.
+- **Validate**: Checks the validity of the token.
+- **Get Subject**: Extracts the user information from the JWT.
 
-#### Scenarios to Consider
+### RefreshTokenManagementService
+The `RefreshTokenManagementService` manages refresh tokens, including generating, rotating, and invalidating them.
 
-1. **Initial Login (Username and Password) → `AuthTokensManagementFacade::createAuthTokens`**
-    - **Use Case**: When a user initially logs in with their username and password.
-    - **Action**: The `createAuthTokens` method is called to generate a new pair of access and refresh tokens. This is the standard procedure when the user is authenticating with their credentials.
+### TokenRevocationService
+The `TokenRevocationService` manages token revocation, ensuring that revoked tokens are no longer accepted in requests.
 
-2. **Refreshing Tokens with Token Rotation (Using a Refresh Token) → `AuthTokensManagementFacade::refreshAuthTokens`**
-    - **Use Case**: When the user’s access token has expired, but they still have a valid refresh token.
-    - **Action**: The `refreshAuthTokens` method is called to generate a new pair of access and refresh tokens using the existing refresh token. This does not involve the user entering their username and password again.
-    - **Important Distinction**: This method is not used for re-authenticating with credentials but for extending the session by renewing tokens.
+### DefaultJwtValidityFilter
 
-3. **Refreshing Only the Access Token (No Token Rotation) → `AuthTokensManagementFacade::refreshAccessToken`**
-    - **Use Case**: When the user wants to refresh only the access token using an existing refresh token. For example, this could be part of a continuous session where only the access token needs to be refreshed without altering the refresh token.
-    - **Action**: The `refreshAccessToken` method generates a new access token while leaving the refresh token unchanged. Note, this is less secure than scenario number 2, where also the refresh token gets refreshed. The user should store the refresh token in a safe place. However, the refresh token will still expire according to the user configuration.
+The `DefaultJwtValidityFilter` plays a crucial role in securing your application by orchestrating the validation of JWT and refresh tokens for all incoming requests. It ensures that tokens used for authentication are valid, unexpired, and have not been revoked. This filter is automatically applied to all routes that require authentication, providing a secure and efficient token validation mechanism.
 
-</details>
+Key features of the filter include:
 
+- **Token Expiration Check**: The filter ensures that the JWT token has not expired. If the token is expired, the request is immediately rejected with an unauthorized status, preventing further processing.
+  
+- **Token Revocation Check**: If a token has been explicitly revoked, either by an administrator or due to user logout, the filter will recognize this and reject the request. Revoked tokens are stored in a dedicated database table (`revoked_tokens`), ensuring that even if a token is valid by expiration standards, it will still be rejected if it was revoked.
 
-<details>
-  <summary>JwtTokenService</summary>
+- **Refresh Token Validation**: The filter also verifies that the user associated with the JWT token has an active refresh token. If no active refresh token exists for that user, the filter proactively revokes the JWT and prevents further access. This ensures that tokens cannot be used after a user’s refresh token has been invalidated.
 
-The `JwtTokenService` is responsible for handling the creation and validation of JWT tokens. It interacts with the refresh token store to support token refresh operations.
+#### Automatic Database Table Creation
 
-- **Create**: Generates a new JWT for a given subject.
-- **Refresh**: Validates and refreshes a JWT based on a provided refresh token.
-- **Get Subject**: Extracts the subject from a JWT.
-- **Get Expiry Time**: Retrieves the expiration time of a JWT.
-</details>
+To support these features, the library automatically creates two database tables during initialization:
 
-<details>
-  <summary>RefreshTokenManagementService</summary>
+1. **`refresh_tokens` Table**: This table keeps track of all generated refresh tokens. Every time a refresh token is created, it is stored here, allowing the system to validate if a user’s refresh token is still active during authentication.
 
-The `RefreshTokenManagementService` handles the lifecycle of refresh tokens, including their creation, validation, and invalidation.
+2. **`revoked_tokens` Table**: This table stores information about both revoked access tokens and refresh tokens. When a token is revoked—whether manually or via a logout operation—it is inserted into this table to ensure that no further requests can be authenticated using it.
 
-- **Create**: Generates and stores a new refresh token for a subject.
-- **Refresh**: Rotates the refresh token by invalidating the old one and creating a new one.
-- **Invalidate**: Deletes refresh tokens by their value or subject.
-</details>
+When a user logs out or when the `/auth/auth_tokens` DELETE endpoint is called, both the access token and the associated refresh token (determined by the JWT subject) are stored in the `revoked_tokens` table. This ensures that any future attempts to use these tokens will be blocked, as the filter will reference the `revoked_tokens` table to reject requests containing revoked tokens.
 
+#### Secure Request Handling
 
-<details>
-  <summary>TokenRevocationService</summary>
+The filter operates behind the scenes for every authenticated request, ensuring a robust security layer by:
 
-The `TokenRevocationService` manages the revocation of access tokens. It marks tokens as revoked and checks if a given token has been revoked.
+- **Checking Token Validity**: The filter checks the expiration date and revocation status of the access token.
+- **Cross-Referencing Active Tokens**: It verifies if an active refresh token exists for the user.
+- **Proactive Revocation**: If no active refresh token is found, the system revokes the current access token and prevents further use of both tokens.
 
-- **Revoke Token**: Marks an access token as revoked.
-- **Is Token Revoked**: Checks if an access token has been revoked.
-
-</details>
-
-
-<details>
-  <summary>DefaultJwtValidityFilter</summary>
-
-The `DefaultJwtValidityFilter` is a built-in `OncePerRequestFilter` that automatically validates JWT tokens and checks for related refresh token revocation in every incoming request. This filter ensures that:
-
-- **Token Expiration**: The JWT is checked for expiration. If expired, the request is rejected with an unauthorized status.
-- **Token Revocation**: The JWT is checked for revocation status. If revoked, the request is rejected with an unauthorized status.
-- **Active Refresh Token Check**: The filter ensures that the user associated with the JWT has an active refresh token. If no active refresh token is found, the JWT is proactively revoked, and the request is rejected.
-
-The `DefaultJwtValidityFilter` is automatically applied in the security configuration and handles the security checks for every request that requires authentication.
-</details>
+By integrating the `DefaultJwtValidityFilter`, you can trust that your application’s token-based authentication will rigorously enforce token expiration, revocation, and validation processes, automatically keeping your application secure without requiring additional manual configurations.

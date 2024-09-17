@@ -179,6 +179,7 @@ The `AuthTokensManagementFacade` provides a high-level interface for creating, r
 
 - **Create Auth Tokens**: Generates new access and refresh tokens.
 - **Refresh Auth Tokens**: Rotates access and refresh tokens using a valid refresh token.
+- **Refresh Access Token**: Generates a new access token only.
 - **Delete Auth Tokens**: Revokes both tokens (logging out the user).
 
 ### JwtTokenService

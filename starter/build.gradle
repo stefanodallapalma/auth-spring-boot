@@ -10,30 +10,13 @@ java {
     withSourcesJar()
 }
 
-jreleaser {
-    signing {
-        active = 'ALWAYS'
-        armored = true
-    }
-    deploy {
-        maven {
-            mavenCentral {
-                sonatype {
-                    active = 'ALWAYS'
-                    url = 'https://central.sonatype.com/api/v1/publisher'
-                    stagingRepository('target/staging-deploy')
-                }
-            }
-        }
-    }
-}
 
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = 'io.github.stefanodallapalma'
             artifactId = 'auth-spring-boot-starter'
-            version = '0.0.1'
+            groupId = 'io.github.stefanodallapalma'
+            version = '0.0.2'
 
             from components.java
 
@@ -71,7 +54,6 @@ publishing {
 }
 
 signing {
-//    useInMemoryPgpKeys(System.getenv("SIGNING_KEY"), System.getenv("SIGNING_PASSPHRASE"))
     useGpgCmd()
     sign publishing.publications.maven
 }

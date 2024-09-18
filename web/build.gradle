@@ -1,5 +1,13 @@
 plugins {
     id 'java'
+    id 'maven-publish'
+    id 'org.jreleaser' version '1.14.0'
+    id 'signing'
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 repositories {
@@ -18,6 +26,63 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            
+            artifactId = 'auth-spring-boot-web'
+            groupId = 'io.github.stefanodallapalma'
+            version = '0.0.1'
+
+            from components.java
+
+            pom {
+                name = 'Auth Spring Boot Web'
+                description = 'Web module for the Auth Spring Boot project.'
+                url = 'https://github.com/stefanodallapalma/auth-spring-boot'
+                inceptionYear = '2024'
+                licenses {
+                    license {
+                        name = 'Apache-2.0'
+                        url = 'https://spdx.org/licenses/Apache-2.0.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'stefanodallapalma'
+                        name = 'Stefano Dalla Palma'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/stefanodallapalma/auth-spring-boot.git'
+                    developerConnection = 'scm:git:ssh://github.com/stefanodallapalma/auth-spring-boot.git'
+                    url = 'http://github.com/stefanodallapalma/auth-spring-boot'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir('staging-deploy')
+        }
+    }
+}
+
+signing {
+    useGpgCmd()
+    sign publishing.publications.maven
+}
+
 
 tasks.named('build') {
     dependsOn ':core:build'

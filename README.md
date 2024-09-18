@@ -32,12 +32,6 @@ This library provides an out-of-the-box solution for handling JWT-based authenti
 To use this library, ensure your project meets the following:
 - **Java 17 or higher**.
 - **Spring Boot 3.x**.
-- **Dependencies**:
-    - `spring-boot-starter-security`
-    - `spring-boot-starter-web`
-    - `spring-boot-starter-data-jpa`
-    - `spring-boot-starter-validation`
-    - `springdoc-openapi-starter-webmvc-ui`
 
 
 ## Getting Started
@@ -47,7 +41,7 @@ Ensure the library is available in your project by including it in your `build.g
 
 ```gradle
 dependencies {
-    implementation 'io.github.stefanodallapalma:auth-spring-boot-starter:0.0.1'
+    implementation 'io.github.stefanodallapalma:auth-spring-boot-starter:0.0.2'
 }
 ```
 

@@ -1,46 +1,63 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'org.jreleaser' version '1.14.0'
     id 'signing'
 }
-
-group = 'io.github.stefanodallapalma'
-version = '0.0.1'
 
 java {
     withJavadocJar()
     withSourcesJar()
 }
 
+jreleaser {
+    signing {
+        active = 'ALWAYS'
+        armored = true
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository('target/staging-deploy')
+                }
+            }
+        }
+    }
+}
+
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            from components.java
+        maven(MavenPublication) {
+            groupId = 'io.github.stefanodallapalma'
             artifactId = 'auth-spring-boot-starter'
+            version = '0.0.1'
+
+            from components.java
 
             pom {
                 name = 'Auth Spring Boot Starter'
                 description = 'A Spring Boot starter for authentication with JSON Web Tokens and Refresh Tokens'
                 url = 'https://github.com/stefanodallapalma/auth-spring-boot'
-
+                inceptionYear = '2024'
                 licenses {
                     license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        name = 'Apache-2.0'
+                        url = 'https://spdx.org/licenses/Apache-2.0.html'
                     }
                 }
-
                 developers {
                     developer {
                         id = 'stefanodallapalma'
                         name = 'Stefano Dalla Palma'
-                        email = 'stefano.dallapalma0@gmail.com'
                     }
                 }
                 scm {
-                    connection = 'scm:git:git://github.com/stefanodallapalma/auth-spring-boot.git'
-                    developerConnection = 'scm:git:ssh://git@github.com:stefanodallapalma/auth-spring-boot.git'
-                    url = 'https://github.com/stefanodallapalma/auth-spring-boot'
+                    connection = 'scm:git:https://github.com/stefanodallapalma/auth-spring-boot.git'
+                    developerConnection = 'scm:git:ssh://github.com/stefanodallapalma/auth-spring-boot.git'
+                    url = 'http://github.com/stefanodallapalma/auth-spring-boot'
                 }
             }
         }
@@ -48,19 +65,15 @@ publishing {
 
     repositories {
         maven {
-            name = 'MavenCentral'
-            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-
-            credentials {
-                username = project.findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
-                password = project.findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
-            }
+            url = layout.buildDirectory.dir('staging-deploy')
         }
     }
 }
 
 signing {
-    sign publishing.publications.mavenJava
+//    useInMemoryPgpKeys(System.getenv("SIGNING_KEY"), System.getenv("SIGNING_PASSPHRASE"))
+    useGpgCmd()
+    sign publishing.publications.maven
 }
 
 jar {

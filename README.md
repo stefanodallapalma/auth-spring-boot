@@ -43,11 +43,11 @@ To use this library, ensure your project meets the following:
 ## Getting Started
 
 ### 1. Add Library
-Ensure the library is available in your project by adding the JAR file and updating your dependencies.
-Download the library and add it to your project’s `libs` directory (a version on Maven Central is coming soon). Then, include it in your `build.gradle` file:
+Ensure the library is available in your project by including it in your `build.gradle` file:
+
 ```gradle
 dependencies {
-    implementation files('libs/auth-spring-boot-starter-0.0.1.jar')
+    implementation 'io.github.stefanodallapalma:auth-spring-boot-starter:0.0.1'
 }
 ```
 

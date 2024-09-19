@@ -37,12 +37,23 @@ To use this library, ensure your project meets the following:
 ## Getting Started
 
 ### 1. Add Library
-Ensure the library is available in your project by including it in your `build.gradle` file:
+Ensure [the library](https://central.sonatype.com/artifact/io.github.stefanodallapalma/auth-spring-boot-starter) is available in your project by including it in your `build.gradle` file:
 
+**Gradle:**
 ```gradle
 dependencies {
     implementation 'io.github.stefanodallapalma:auth-spring-boot-starter:0.0.2'
 }
+```
+
+**Maven:**
+
+```xml
+<dependency>
+    <groupId>io.github.stefanodallapalma</groupId>
+    <artifactId>auth-spring-boot-starter</artifactId>
+    <version>0.0.2</version>
+</dependency>
 ```
 
 ### 2. Configure JWT Settings
